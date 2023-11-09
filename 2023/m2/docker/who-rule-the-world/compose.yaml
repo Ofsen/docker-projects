@@ -1,0 +1,83 @@
+version: "3"
+services:
+  worker:
+    image: localhost:5000/worker
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks: 
+      - back-tier
+
+  vote:
+    image: localhost:5000/vote
+    volumes:
+      - ./vote:/usr/local/app
+    ports:
+      - 5002:80
+    networks: 
+     - back-tier
+     - front-tier
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    
+  seed-data:
+    image: localhost:5000/seed-data
+    profiles: ["seed"]
+    depends_on:
+      vote:
+        condition: service_healthy
+    restart: "no"
+    networks: 
+      - front-tier
+  
+  result:
+    image: localhost:5000/result
+    entrypoint: nodemon --inspect=0.0.0.0 server.js
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./result:/usr/local/app
+    ports:
+      - "5001:80"
+      - "127.0.0.1:9229:9229"
+  
+  db:
+    image: postgres:15-alpine
+    networks: 
+      - back-tier
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+      - "./healthchecks:/healthchecks"
+    healthcheck:
+      test: /healthchecks/postgres.sh
+      interval: "5s"
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "postgres"
+    ports:
+      - 5432:5432
+    
+  redis:
+    image: redis
+    volumes:
+      - "./healthchecks:/healthchecks"
+    networks: 
+      - back-tier
+    healthcheck:
+      test: /healthchecks/redis.sh
+      interval: "5s"
+
+networks:
+  back-tier:
+  front-tier:
+
+volumes:
+  db-data:
