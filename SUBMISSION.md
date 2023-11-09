@@ -38,7 +38,7 @@ The architecture is composed of 4 services: front-end for votes, redis DB, a wor
 
 # Architecture
 
-![Architecture](./assets/architecture.png)
+![Architecture](architecture.png)
 
 ## Front-end for votes
 
