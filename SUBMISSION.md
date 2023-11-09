@@ -1,6 +1,6 @@
 # Submission Docker Final Evaluation - WhoRulesTheWorld
 
-This is the submission of the final evaluation for the Docker module named: "WhoRulesTheWorld"
+This is the submission of the final evaluation for the Docker module named: "WhoRulesTheWorld" everything was done using a VPS hosted on OVH
 
 ### Participents
 
@@ -302,4 +302,5 @@ Use the `docker tag <image> <registry>/<image>` to tag the image with the regist
 
 Using the `compose.yaml` file to build the containers & run the application
 ![Alt text](image-9.png)
+![result](https://github.com/Ofsen/docker-projects/assets/24249806/fce64078-4db2-4acf-b467-9fd8e0eb78cf)
 
